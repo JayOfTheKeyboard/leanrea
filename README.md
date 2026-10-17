@@ -47,13 +47,26 @@ Full tables, the context-overhead runs and caveats: [bench/BENCHMARK.md](bench/B
 
 ## Install
 
-Claude Code:
+```sh
+npx skills add aicodeking/leanrea
+```
+
+This uses the [skills CLI](https://skills.sh). It finds the `leanrea` skill and asks which agents to install it for: Claude Code, Codex, Cursor, Gemini CLI, OpenCode and the others it supports.
+
+Common variants:
+```sh
+npx skills add aicodeking/leanrea -g                    # install for your user, in every project
+npx skills add aicodeking/leanrea -a claude-code -y     # Claude Code only, no prompts
+npx skills add aicodeking/leanrea -g -a '*' -y          # every supported agent, user level
+npx skills update leanrea                               # pull the latest version later
+```
+
+Manual install, if you prefer:
 ```sh
 git clone https://github.com/aicodeking/leanrea
 mkdir -p ~/.claude/skills && cp -R leanrea/leanrea ~/.claude/skills/
 ```
-
-For Codex, Cursor, Gemini CLI or any other agent with skills, copy `leanrea/SKILL.md` into that agent's skills folder. If an agent has no skills support, paste the file into its rules or system prompt; it is plain text.
+If an agent has no skills support, paste `leanrea/SKILL.md` into its rules or system prompt; it is plain text.
 
 Use it:
 ```
