@@ -21,11 +21,11 @@ Claude Code headless (`claude -p`), Sonnet 5.5, macOS arm64. 4 reverse-engineeri
 | no skill | 479 s | $2.21 | 81 | 3.11 M | 67/75 (one refusal) |
 | REA (MCP + its skill) | 627 s | $3.36 | 124 | 5.93 M | 75/75 |
 
-Against REA, leanrea had **38% less wall time, 35% lower cost, 56% fewer turns and 60% fewer tokens, at the same accuracy**. Its one partial miss named Notion's older change channel instead of the v2 one (both channels exist).
+Against REA, leanrea had **38% less wall time, 35% lower cost, 56% fewer turns and 60% fewer tokens, at the same accuracy**. Its one partial miss named an older IPC channel instead of the v2 one (both channels exist).
 
 The tasks:
-- **electron**: trace Notion's meeting/mic detection through its app.asar (native function → main-process class → IPC channels).
-- **native**: inventory the exports, TCC permission check and single-instance lock of Notion's `mac_utils.node`.
+- **electron**: trace a feature through a real Electron app's app.asar (native function → main-process class → IPC channels).
+- **native**: inventory the exports, a TCC permission check and the single-instance lock of that app's native addon (`.node`).
 - **go**: toolchain and dependency versions of a stripped `gh` binary.
 - **deep**: from disassembly alone, the exact socket path format, wire protocol and peer authentication of that lock.
 
@@ -35,7 +35,7 @@ The same operation run through REA's CLI vs the raw command:
 |---|---|---|
 | Go build info | 0.56 s | `go version -m`: 0.06 s |
 | Mach-O overview | 3.32 s | otool + dyld_info + nm: 0.04 s |
-| Electron app analysis (Notion) | fails on asar integrity until you pass a flag, then **47.9 s and 140 MB of JSON** | asar extract + `rg -uu`: 4.8 s, 24 KB |
+| Electron app analysis (real desktop app) | fails on asar integrity until you pass a flag, then **47.9 s and 140 MB of JSON** | asar extract + `rg -uu`: 4.8 s, 24 KB |
 
 Full tables, the context-overhead runs and caveats: [bench/BENCHMARK.md](bench/BENCHMARK.md). Raw per-run metrics: [bench/results/final.jsonl](bench/results/final.jsonl).
 
@@ -96,7 +96,7 @@ Use it:
 
 ## Reproduce the benchmark
 
-Needs macOS with Notion.app, `gh` from Homebrew, Node, and Claude Code logged in.
+Needs macOS with the target Electron app installed (see `bench/setup.sh`), `gh` from Homebrew, Node, and Claude Code logged in.
 ```sh
 cd bench
 ./setup.sh        # installs rea-agents@6.5.0, copies the targets into bench/work (gitignored)
@@ -104,7 +104,7 @@ cd bench
 ./ctx.sh          # context-overhead probe
 python3 mcp_list.py node work/rea-install/node_modules/rea-agents/scripts/rea.mjs --mcp   # REA tool count + size
 ```
-The answer keys in `tasks.json` match Notion 7.35.1 and a `gh` built with go1.27.1. Other versions need new keys.
+The answer keys in `tasks.json` match the app versions used here and a `gh` built with go1.27.1. Other versions need new keys.
 
 ## Credit
 
